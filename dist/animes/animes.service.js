@@ -40,8 +40,8 @@ let AnimeService = class AnimeService {
             };
         }
         console.log('form animeService', filter);
-        const allAnime = await this.animeModel.find(filter).limit(limit).skip(skip);
-        const numOfAnime = await this.animeModel.find(filter).countDocuments();
+        const allAnime = await this.animeModel.find(filter).limit(limit).skip(skip).exec();
+        const numOfAnime = await this.animeModel.countDocuments(filter).exec();
         const totalPages = Math.ceil(numOfAnime / limit);
         return {
             data: allAnime,
@@ -53,16 +53,21 @@ let AnimeService = class AnimeService {
             },
         };
     }
-    async createAnime(anime) {
-        const res = await this.animeModel.create(anime);
+    async createAnime(anime, user) {
+        const data = Object.assign(anime, { user: user._id });
+        const res = await this.animeModel.create(data);
         return res;
     }
     async findAnime(id) {
         const isValid = mongoose_2.default.isValidObjectId(id);
         if (!isValid) {
-            throw new common_1.BadRequestException("Enter valid I");
+            throw new common_1.BadRequestException("Enter valid ID");
         }
-        return await this.animeModel.findById(id);
+        const anime = await this.animeModel.findById(id);
+        if (!anime) {
+            throw new common_1.NotFoundException("Book not found");
+        }
+        return anime;
     }
     async updateById(id, anime) {
         const updatedAnime = await this.animeModel.findByIdAndUpdate(id, anime, { new: true, runValidators: true }).exec();

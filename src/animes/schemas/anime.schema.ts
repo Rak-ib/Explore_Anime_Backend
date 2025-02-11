@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document } from "mongoose";
+import mongoose, { Document } from "mongoose";
+import { User } from "../../auth/schema/user.schema";
 @Schema({
     timestamps:true
 })
@@ -21,5 +22,8 @@ export class Anime extends Document {
     'Comedy',
     'Award Winning'],type:String})
     category:string;
+
+    @Prop({type:mongoose.Schema.ObjectId, ref:User.name})
+    user:User
 }
 export const AnimeSchema=SchemaFactory.createForClass(Anime)

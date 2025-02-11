@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 import { Anime } from "./schemas/anime.schema";
 import { CreateAnimeDto } from "./dto/create-anime.dto";
 import { UpdateAnimeDto } from "./dto/update-anime.dto";
+import { User } from "../auth/schema/user.schema";
 // import { Query  } from "express-serve-static-core";
 
 @Injectable()
@@ -13,7 +14,9 @@ export class AnimeService{
     constructor(
         @InjectModel(Anime.name)
         private animeModel:mongoose.Model<Anime>
-    ){}
+    ){
+        //console.log('second')
+    }
 
     async findAll(query: Record<string,string>):Promise<{data:Anime[],metadata:any}>{
         console.log(query)
@@ -33,8 +36,8 @@ export class AnimeService{
                  $options: 'i' };
           }
         console.log('form animeService',filter)
-        const allAnime=await this.animeModel.find(filter).limit(limit).skip(skip);
-        const numOfAnime= await this.animeModel.find(filter).countDocuments();
+        const allAnime=await this.animeModel.find(filter).limit(limit).skip(skip).exec();
+        const numOfAnime= await this.animeModel.countDocuments(filter).exec()
         const totalPages=Math.ceil(numOfAnime/limit)
         return {
             data: allAnime,
@@ -46,16 +49,22 @@ export class AnimeService{
             },
         };
     }
-    async createAnime(anime:CreateAnimeDto):Promise<Anime>{
-        const res=await this.animeModel.create(anime);
+    async createAnime(anime:CreateAnimeDto,user:User):Promise<Anime>{
+        // console.log('third')
+        const data=Object.assign(anime,{user:user._id})
+        const res=await this.animeModel.create(data);
         return res;
     }
     async findAnime(id:string):Promise<Anime>{
         const isValid=mongoose.isValidObjectId(id)
         if(!isValid){
-            throw new BadRequestException("Enter valid I")
+            throw new BadRequestException("Enter valid ID")
         }
-        return await this.animeModel.findById(id);
+        const anime=await this.animeModel.findById(id)
+        if(!anime){
+            throw new NotFoundException("Book not found")
+        }
+        return anime;
     }
     async updateById(id:string,anime:UpdateAnimeDto):Promise<Anime>{
         const updatedAnime= await this.animeModel.findByIdAndUpdate(id,anime,{new:true,runValidators:true}).exec()

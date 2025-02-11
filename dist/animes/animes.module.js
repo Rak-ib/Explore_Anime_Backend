@@ -12,12 +12,16 @@ const mongoose_1 = require("@nestjs/mongoose");
 const animes_service_1 = require("./animes.service");
 const anime_schema_1 = require("./schemas/anime.schema");
 const animes_controller_1 = require("./animes.controller");
+const auth_module_1 = require("../auth/auth.module");
 let AnimesModule = class AnimesModule {
 };
 exports.AnimesModule = AnimesModule;
 exports.AnimesModule = AnimesModule = __decorate([
     (0, common_1.Module)({
-        imports: [mongoose_1.MongooseModule.forFeature([{ name: anime_schema_1.Anime.name, schema: anime_schema_1.AnimeSchema }])],
+        imports: [
+            auth_module_1.AuthModule,
+            mongoose_1.MongooseModule.forFeature([{ name: anime_schema_1.Anime.name, schema: anime_schema_1.AnimeSchema }])
+        ],
         controllers: [animes_controller_1.AnimeController],
         providers: [animes_service_1.AnimeService]
     })

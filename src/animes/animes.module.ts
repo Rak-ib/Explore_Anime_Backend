@@ -5,9 +5,12 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { AnimeService } from "./animes.service";
 import { Anime, AnimeSchema } from "./schemas/anime.schema";
 import { AnimeController } from "./animes.controller";
+import { AuthModule } from "../auth/auth.module";
 
 @Module({
-    imports:[MongooseModule.forFeature([{name:Anime.name,schema:AnimeSchema}])],
+    imports:[
+        AuthModule,
+        MongooseModule.forFeature([{name:Anime.name,schema:AnimeSchema}])],
     controllers:[AnimeController],
     providers:[AnimeService]
 })

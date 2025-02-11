@@ -9,7 +9,7 @@ export declare class AnimeController {
         data: Anime[];
         metadata: any;
     }>;
-    createAnime(anime: CreateAnimeDto): Promise<Anime>;
+    createAnime(anime: CreateAnimeDto, req: any): Promise<Anime>;
     getAnime(id: string): Promise<Anime>;
     UpdateAnime(id: string, anime: UpdateAnimeDto): Promise<Anime>;
 }
