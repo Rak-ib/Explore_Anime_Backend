@@ -2,30 +2,29 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { join } from 'path';
-import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create(AppModule);
+
+  // Enable CORS if needed
   app.enableCors({
-    origin: 'https://exploreanime.vercel.app', // Frontend URL
+    origin: 'https://exploreanime.vercel.app', // Adjust the frontend URL
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
 
-  // Serve Swagger static assets
-  app.useStaticAssets(join(__dirname, '..', 'swagger-ui'));
-
+  // Swagger Setup
   const config = new DocumentBuilder()
     .setTitle('Explore Anime API')
     .setDescription('API documentation for Explore Anime projects')
     .setVersion('1.0')
-    .addBearerAuth() // Add JWT authentication to Swagger
+    .addBearerAuth() // Add JWT authentication
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api', app, document);  // Swagger UI will be available at /api
 
+  // Global validation pipe setup
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
     forbidNonWhitelisted: true,
@@ -33,6 +32,6 @@ async function bootstrap() {
   }));
 
   await app.listen(process.env.PORT ?? 3000);
-  console.log("Swagger is set up at /api");
 }
+
 bootstrap();
