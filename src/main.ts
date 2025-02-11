@@ -25,7 +25,7 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   // Serve Swagger UI static files for Vercel
-  app.use('/swagger', swaggerUi.serve, swaggerUi.setup(document));
+  app.use('/api', swaggerUi.serve, swaggerUi.setup(document));
 
   // Global validation pipes
   app.useGlobalPipes(new ValidationPipe({
