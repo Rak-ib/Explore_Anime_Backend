@@ -119,12 +119,12 @@ export class AuthService {
             console.log("token",token)
     
             // Set the token in an HTTP-only cookie
-            res.cookie('authToken', token, {
-                httpOnly: true, // Prevents access from JavaScript
-                secure: process.env.NODE_ENV === 'production', // Use secure flag in production
-                sameSite: 'strict',
-                maxAge: 24 * 60 * 60 * 1000, // 1-day expiration
-            });
+            // res.cookie('authToken', token, {
+            //     httpOnly: true, // Prevents access from JavaScript
+            //     secure: process.env.NODE_ENV === 'production', // Use secure flag in production
+            //     sameSite: 'strict',
+            //     maxAge: 24 * 60 * 60 * 1000, // 1-day expiration
+            // });
             res.cookie('authToken', token, {
                 httpOnly: true, 
                 secure: true,  // Ensure it's always secure (Vercel uses HTTPS)
