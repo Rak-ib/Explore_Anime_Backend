@@ -136,7 +136,7 @@ export class AuthService {
             
     
             // Return success message
-            res.status(200).json({ message: 'Login successful',username:user.user_name,token });
+            res.status(200).json({ message: 'Login successful',username:user.user_name});
     
         } catch (error) {
             // Throw exception to notify the user of the error
