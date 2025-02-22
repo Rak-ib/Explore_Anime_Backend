@@ -4,7 +4,7 @@ export declare class User extends Document {
     user_email: string;
     user_password: string;
 }
-export declare const userSchema: import("mongoose").Schema<User, import("mongoose").Model<User, any, any, any, Document<unknown, any, User> & User & Required<{
+export declare const UserSchema: import("mongoose").Schema<User, import("mongoose").Model<User, any, any, any, Document<unknown, any, User> & User & Required<{
     _id: unknown;
 }> & {
     __v: number;

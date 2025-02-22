@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dto/create-login.dto';
+import { Response } from 'express';
 export declare class AuthService {
     private userModel;
     private jwtService;
@@ -10,7 +11,8 @@ export declare class AuthService {
     createUser(userDto: CreateUserDto): Promise<{
         token: string;
     }>;
-    loginUser(loginDto: LoginDto): Promise<{
-        token: string;
+    loginUser(loginDto: LoginDto, res: Response): Promise<void>;
+    checkAuth(authToken: string): Promise<{
+        username: string;
     }>;
 }

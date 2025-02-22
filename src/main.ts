@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as swaggerUi from 'swagger-ui-express'; // Add this import
+import * as cookieParser from 'cookie-parser';
 
 
 async function bootstrap() {
@@ -33,6 +34,7 @@ async function bootstrap() {
     forbidNonWhitelisted: true,
     transform: true,
   }));
+  app.use(cookieParser());
 
   await app.listen(process.env.PORT ?? 3000);
 }

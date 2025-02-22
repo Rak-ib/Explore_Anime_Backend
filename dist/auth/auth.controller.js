@@ -25,15 +25,25 @@ let AuthController = class AuthController {
     async createUser(user) {
         return await this.authService.createUser(user);
     }
-    async loginUser(user) {
-        return await this.authService.loginUser(user);
+    async loginUser(user, res) {
+        console.log("new");
+        return await this.authService.loginUser(user, res);
+    }
+    async checkAuth(req) {
+        const authToken = req.cookies.authToken;
+        console.log("auth has been called", authToken);
+        if (!authToken) {
+            console.log("okay");
+            throw new common_1.UnauthorizedException();
+        }
+        return this.authService.checkAuth(authToken);
     }
 };
 exports.AuthController = AuthController;
 __decorate([
     (0, common_1.Post)('/signup'),
-    (0, swagger_1.ApiOperation)({ summary: "Signup " }),
-    (0, swagger_1.ApiResponse)({ status: 201, description: "" }),
+    (0, swagger_1.ApiOperation)({ summary: 'Signup ' }),
+    (0, swagger_1.ApiResponse)({ status: 201, description: '' }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto]),
@@ -42,10 +52,20 @@ __decorate([
 __decorate([
     (0, common_1.Post)('/login'),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_login_dto_1.LoginDto]),
+    __metadata("design:paramtypes", [create_login_dto_1.LoginDto, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "loginUser", null);
+__decorate([
+    (0, common_1.Get)('/check-auth'),
+    (0, swagger_1.ApiOperation)({ summary: 'check is logged in ' }),
+    (0, swagger_1.ApiResponse)({ status: 201, description: 'Okay good' }),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "checkAuth", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService])

@@ -29,16 +29,21 @@ let AuthService = class AuthService {
         session.startTransaction();
         try {
             const { user_name, user_email, user_password } = userDto;
-            console.log(user_name, user_email, user_password);
-            const hashedPassword = await bcrypt.hash(user_password, 10);
-            const user = await this.userModel.create([{
-                    user_name,
-                    user_email,
-                    user_password: hashedPassword
-                },
-            ], {
-                session
+            console.log('Received DTO:', userDto);
+            const existingUser = await this.userModel.findOne({
+                $or: [{ user_email }, { user_name }]
             });
+            if (existingUser) {
+                throw new common_1.BadRequestException('User already exists');
+            }
+            const hashedPassword = await bcrypt.hash(user_password, 10);
+            const user = await this.userModel.create([
+                {
+                    user_name: user_name,
+                    user_email: user_email,
+                    user_password: hashedPassword
+                }
+            ], { session });
             const token = this.jwtService.sign({ id: user[0]._id });
             await session.commitTransaction();
             session.endSession();
@@ -47,23 +52,56 @@ let AuthService = class AuthService {
         catch (error) {
             await session.abortTransaction();
             session.endSession();
-            throw new Error(`${error.message}`);
+            throw new common_1.BadRequestException(error.message);
         }
     }
-    async loginUser(loginDto) {
-        const { identifier, user_password } = loginDto;
-        const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier);
-        const user = isEmail ? await this.userModel.findOne({ user_email: identifier }) :
-            await this.userModel.findOne({ user_name: identifier });
-        if (!user) {
-            throw new common_1.UnauthorizedException(`invalid ${isEmail ? ' email' : ' user name'}`);
+    async loginUser(loginDto, res) {
+        try {
+            const { identifier, user_password } = loginDto;
+            const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier);
+            const user = isEmail ? await this.userModel.findOne({ user_email: identifier }) :
+                await this.userModel.findOne({ user_name: identifier });
+            if (!user) {
+                throw new common_1.UnauthorizedException(`Invalid ${isEmail ? 'email' : 'username'}`);
+            }
+            console.log("hey everyone");
+            const isPasswordMatched = await bcrypt.compare(user_password, user.user_password);
+            if (!isPasswordMatched) {
+                throw new common_1.UnauthorizedException('Wrong Password');
+            }
+            console.log("okay");
+            const token = this.jwtService.sign({ id: user._id });
+            console.log("token", token);
+            res.cookie('authToken', token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'strict',
+                maxAge: 24 * 60 * 60 * 1000,
+            });
+            res.status(200).json({ message: 'Login successful', username: user.user_name, token });
         }
-        const isPasswordMatched = await bcrypt.compare(user_password, user.user_password);
-        if (!isPasswordMatched) {
-            throw new common_1.UnauthorizedException('Wrong Password');
+        catch (error) {
+            throw new common_1.BadRequestException(error.message);
         }
-        const token = this.jwtService.sign({ id: user._id });
-        return { token };
+    }
+    async checkAuth(authToken) {
+        console.log("eikhane");
+        if (!authToken) {
+            throw new common_1.UnauthorizedException("No token found");
+        }
+        try {
+            console.log("at least come here ");
+            const decoded = this.jwtService.verify(authToken);
+            console.log("decode", decoded);
+            const user = await this.userModel.findById(decoded.id);
+            console.log("user", user);
+            if (!user)
+                throw new common_1.UnauthorizedException('Invalid user');
+            return { username: user.user_name };
+        }
+        catch {
+            throw new common_1.UnauthorizedException('Invalid or expired token');
+        }
     }
 };
 exports.AuthService = AuthService;
