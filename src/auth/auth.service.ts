@@ -127,12 +127,12 @@ export class AuthService {
             // });
             res.cookie('authToken', token, {
                 httpOnly: true, 
-                secure: true,  // Ensure it's always secure (Vercel uses HTTPS)
-                sameSite: 'none',  // Allows cookies in cross-origin requests
-                domain: '.vercel.app', // Matches frontend & backend domains
-                path: '/',  // Available for all routes
+                secure: true,  // Always secure in production
+                sameSite: 'none',  // Required for cross-origin requests
+                path: '/',  // Available everywhere in the domain
                 maxAge: 24 * 60 * 60 * 1000, // 1-day expiration
             });
+            
             
     
             // Return success message
