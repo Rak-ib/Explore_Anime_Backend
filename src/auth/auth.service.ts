@@ -125,6 +125,14 @@ export class AuthService {
                 sameSite: 'strict',
                 maxAge: 24 * 60 * 60 * 1000, // 1-day expiration
             });
+            res.cookie('authToken', token, {
+                httpOnly: true, 
+                secure: true,  // Ensure it's always secure (Vercel uses HTTPS)
+                sameSite: 'none',  // Allows cookies in cross-origin requests
+                domain: '.vercel.app', // Matches frontend & backend domains
+                path: '/',  // Available for all routes
+                maxAge: 24 * 60 * 60 * 1000, // 1-day expiration
+            });
             
     
             // Return success message
