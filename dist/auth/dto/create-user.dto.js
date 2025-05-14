@@ -16,21 +16,21 @@ class CreateUserDto {
 }
 exports.CreateUserDto = CreateUserDto;
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'user name' }),
+    (0, swagger_1.ApiProperty)({ description: 'userName' }),
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], CreateUserDto.prototype, "user_name", void 0);
+], CreateUserDto.prototype, "userName", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ description: 'email' }),
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], CreateUserDto.prototype, "user_email", void 0);
+], CreateUserDto.prototype, "email", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ description: 'password' }),
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], CreateUserDto.prototype, "user_password", void 0);
+], CreateUserDto.prototype, "password", void 0);
 //# sourceMappingURL=create-user.dto.js.map

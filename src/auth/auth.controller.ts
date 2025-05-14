@@ -11,8 +11,8 @@ export class AuthController {
   @Post('/signup')
   @ApiOperation({ summary: 'Signup ' })
   @ApiResponse({ status: 201, description: '' })
-  async createUser(@Body() user: CreateUserDto) {
-    return await this.authService.createUser(user);
+  async createUser(@Body() user: CreateUserDto, @Res() res: Response) {
+    return this.authService.createUser(user, res);
   }
   @Post('/login')
   async loginUser(@Body() user: LoginDto, @Res() res: Response) {
@@ -33,5 +33,11 @@ export class AuthController {
     return this.authService.checkAuth(authToken)
     
     
+  }
+  @Post('/logout')
+  @ApiOperation({summary: 'logout operation'})
+  @ApiResponse({status:200, description:'Logout successful '})
+  async logout(@Res() res){
+     return this.authService.logoutUser(res);
   }
 }

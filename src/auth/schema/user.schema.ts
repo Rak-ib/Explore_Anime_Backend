@@ -8,11 +8,11 @@ import { Document } from "mongoose";
 })
 export class User extends Document{
     @Prop({required:true,unique:true})
-    user_name:string;
+    userName:string;
     @Prop({required:true,unique:true})
-    user_email:string;
+    email:string;
     @Prop({required:true})
-    user_password:string
+    password:string
 
 }
 export const UserSchema=SchemaFactory.createForClass(User)

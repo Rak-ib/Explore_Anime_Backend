@@ -22,8 +22,8 @@ let AuthController = class AuthController {
     constructor(authService) {
         this.authService = authService;
     }
-    async createUser(user) {
-        return await this.authService.createUser(user);
+    async createUser(user, res) {
+        return this.authService.createUser(user, res);
     }
     async loginUser(user, res) {
         console.log("new");
@@ -38,6 +38,9 @@ let AuthController = class AuthController {
         }
         return this.authService.checkAuth(authToken);
     }
+    async logout(res) {
+        return this.authService.logoutUser(res);
+    }
 };
 exports.AuthController = AuthController;
 __decorate([
@@ -45,8 +48,9 @@ __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Signup ' }),
     (0, swagger_1.ApiResponse)({ status: 201, description: '' }),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto]),
+    __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "createUser", null);
 __decorate([
@@ -66,6 +70,15 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "checkAuth", null);
+__decorate([
+    (0, common_1.Post)('/logout'),
+    (0, swagger_1.ApiOperation)({ summary: 'logout operation' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Logout successful ' }),
+    __param(0, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "logout", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService])

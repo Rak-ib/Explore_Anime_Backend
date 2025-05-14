@@ -10,6 +10,6 @@ export class LoginDto{
     @ApiProperty({description:"Password"})
     @IsNotEmpty()
     @IsString()
-    user_password:string;
+    password:string;
     
 }

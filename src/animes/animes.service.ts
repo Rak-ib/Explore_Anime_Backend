@@ -1,44 +1,47 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import mongoose from "mongoose";
-// import { CreateBookDto } from "./dto/create-book.dto";
-// import { UpdateBookDto } from "./dto/update-book.dto";
+import mongoose, { Model } from "mongoose";
 import { Anime } from "./schemas/anime.schema";
 import { CreateAnimeDto } from "./dto/create-anime.dto";
 import { UpdateAnimeDto } from "./dto/update-anime.dto";
 import { User } from "../auth/schema/user.schema";
-// import { Query  } from "express-serve-static-core";
 
 @Injectable()
-export class AnimeService{
+export class AnimeService {
     constructor(
         @InjectModel(Anime.name)
-        private animeModel:mongoose.Model<Anime>
-    ){
-        //console.log('second')
-    }
+        private readonly animeModel: Model<Anime>
+    ) {}
 
-    async findAll(query: Record<string,string>):Promise<{data:Anime[],metadata:any}>{
-        console.log(query)
-        const limit:number=5;
-        const page:number=Number(query.page)||1;
-        const skip:number=limit*(page-1);
-        const filter:Record<string,any>={};
-        if(query.anime_name){
-            filter.anime_name={
-                $regex:query.anime_name,
-                $options:'i'
-            }
+    async findAll(query: Record<string, string>): Promise<{ data: Anime[]; metadata: any }> {
+        console.log("find all come here2");
+        const limit = 5;
+        const page = Number(query.page) || 1;
+        const skip = limit * (page - 1);
+        const filter: Record<string, any> = {};
+
+        if (query.title) {
+            filter.title = { $regex: query.title, $options: "i" };
         }
-        if (query.category) {
-            filter.category = { 
-                $regex: query.category,
-                 $options: 'i' };
-          }
-        console.log('form animeService',filter)
-        const allAnime=await this.animeModel.find(filter).limit(limit).skip(skip).exec();
-        const numOfAnime= await this.animeModel.countDocuments(filter).exec()
-        const totalPages=Math.ceil(numOfAnime/limit)
+
+        if (query.status) {
+            filter.status = query.status;
+        }
+
+        if (query.genre) {
+            filter.genres = { $in: [query.genre] };
+        }
+
+        const allAnime = await this.animeModel.find(filter)
+            .limit(limit)
+            .skip(skip)
+            .populate('user', 'name email')
+            .lean()
+            .exec();
+            console.log("find all come here3");
+        const numOfAnime = await this.animeModel.countDocuments(filter).exec();
+        const totalPages = Math.ceil(numOfAnime / limit);
+
         return {
             data: allAnime,
             metadata: {
@@ -49,28 +52,75 @@ export class AnimeService{
             },
         };
     }
-    async createAnime(anime:CreateAnimeDto,user:User):Promise<Anime>{
-        // console.log('third')
-        const data=Object.assign(anime,{user:user._id})
-        const res=await this.animeModel.create(data);
-        return res;
+
+    async createAnime(anime: CreateAnimeDto, user: User): Promise<Anime> {
+        console.log("did come here ")
+        const data = { ...anime, user: user._id };
+        
+        // Check if anime with same title already exists
+        console.log("did come here ")
+        const existingAnime = await this.animeModel.findOne({ title: anime.title });
+        if (existingAnime) {
+            throw new BadRequestException('Anime with this title already exists');
+        }
+
+        return await this.animeModel.create(data);
     }
-    async findAnime(id:string):Promise<Anime>{
-        const isValid=mongoose.isValidObjectId(id)
-        if(!isValid){
-            throw new BadRequestException("Enter valid ID")
+
+    async findAnime(id: string): Promise<Anime> {
+        if (!mongoose.isValidObjectId(id)) {
+            throw new BadRequestException("Enter a valid ID");
         }
-        const anime=await this.animeModel.findById(id)
-        if(!anime){
-            throw new NotFoundException("Book not found")
+
+        const anime = await this.animeModel.findById(id)
+            .populate('user', 'name email')
+            .populate('related_anime', 'title cover_image')
+            .lean()
+            .exec();
+            
+        if (!anime) {
+            throw new NotFoundException("Anime not found");
         }
+
         return anime;
     }
-    async updateById(id:string,anime:UpdateAnimeDto):Promise<Anime>{
-        const updatedAnime= await this.animeModel.findByIdAndUpdate(id,anime,{new:true,runValidators:true}).exec()
-        if(!updatedAnime){
-            throw new NotFoundException("anime Not found")
+
+    async updateById(id: string, anime: UpdateAnimeDto): Promise<Anime> {
+        if (!mongoose.isValidObjectId(id)) {
+            throw new BadRequestException("Enter a valid ID");
         }
+
+        const updatedAnime = await this.animeModel.findByIdAndUpdate(
+            id, 
+            anime, 
+            {
+                new: true,
+                runValidators: true,
+            }
+        )
+        .populate('user', 'name email')
+        .populate('related_anime', 'title cover_image')
+        .lean()
+        .exec();
+
+        if (!updatedAnime) {
+            throw new NotFoundException("Anime not found");
+        }
+
         return updatedAnime;
+    }
+
+    async deleteById(id: string): Promise<{ deleted: boolean }> {
+        if (!mongoose.isValidObjectId(id)) {
+            throw new BadRequestException("Enter a valid ID");
+        }
+
+        const result = await this.animeModel.deleteOne({ _id: id }).exec();
+        
+        if (result.deletedCount === 0) {
+            throw new NotFoundException("Anime not found");
+        }
+
+        return { deleted: true };
     }
 }

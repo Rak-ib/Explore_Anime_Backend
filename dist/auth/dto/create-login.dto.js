@@ -26,5 +26,5 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], LoginDto.prototype, "user_password", void 0);
+], LoginDto.prototype, "password", void 0);
 //# sourceMappingURL=create-login.dto.js.map

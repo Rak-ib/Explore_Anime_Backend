@@ -18,15 +18,15 @@ exports.User = User;
 __decorate([
     (0, mongoose_1.Prop)({ required: true, unique: true }),
     __metadata("design:type", String)
-], User.prototype, "user_name", void 0);
+], User.prototype, "userName", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ required: true, unique: true }),
     __metadata("design:type", String)
-], User.prototype, "user_email", void 0);
+], User.prototype, "email", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ required: true }),
     __metadata("design:type", String)
-], User.prototype, "user_password", void 0);
+], User.prototype, "password", void 0);
 exports.User = User = __decorate([
     (0, mongoose_1.Schema)({
         timestamps: true

@@ -11,6 +11,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateAnimeDto = void 0;
 const class_validator_1 = require("class-validator");
+const class_transformer_1 = require("class-transformer");
+const create_anime_dto_1 = require("../dto/create-anime.dto");
 class UpdateAnimeDto {
 }
 exports.UpdateAnimeDto = UpdateAnimeDto;
@@ -18,33 +20,65 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], UpdateAnimeDto.prototype, "anime_name", void 0);
+], UpdateAnimeDto.prototype, "title", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], UpdateAnimeDto.prototype, "image_link", void 0);
+], UpdateAnimeDto.prototype, "japanese_title", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], UpdateAnimeDto.prototype, "description", void 0);
+], UpdateAnimeDto.prototype, "synopsis", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsString)({ each: true }),
+    __metadata("design:type", Array)
+], UpdateAnimeDto.prototype, "genres", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], UpdateAnimeDto.prototype, "readMore_link", void 0);
+], UpdateAnimeDto.prototype, "release_date", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsIn)(["Ongoing", "Completed", "Upcoming"]),
+    __metadata("design:type", String)
+], UpdateAnimeDto.prototype, "status", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], UpdateAnimeDto.prototype, "episodes", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsIn)(['Adventure',
-        'Drama',
-        'Fantasy',
-        'Action',
-        'Sci-Fi',
-        'Suspense',
-        'Comedy',
-        'Award Winning']),
     __metadata("design:type", String)
-], UpdateAnimeDto.prototype, "category", void 0);
+], UpdateAnimeDto.prototype, "duration_per_episode", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.ValidateNested)({ each: true }),
+    (0, class_transformer_1.Type)(() => create_anime_dto_1.StreamingLinkDto),
+    __metadata("design:type", Array)
+], UpdateAnimeDto.prototype, "streaming_links", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.ValidateNested)({ each: true }),
+    (0, class_transformer_1.Type)(() => create_anime_dto_1.EpisodeDto),
+    __metadata("design:type", Array)
+], UpdateAnimeDto.prototype, "episodes_list", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.ValidateNested)({ each: true }),
+    (0, class_transformer_1.Type)(() => create_anime_dto_1.CharacterDto),
+    __metadata("design:type", Array)
+], UpdateAnimeDto.prototype, "characters", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.ValidateNested)({ each: true }),
+    (0, class_transformer_1.Type)(() => create_anime_dto_1.ReviewDto),
+    __metadata("design:type", Array)
+], UpdateAnimeDto.prototype, "reviews", void 0);
 //# sourceMappingURL=update-anime.dto.js.map

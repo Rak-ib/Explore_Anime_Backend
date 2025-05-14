@@ -10,7 +10,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: 'https://exploreanime.vercel.app', // Frontend URL
+    // origin: 'https://exploreanime.vercel.app', // Frontend URL
+    origin: 'http://localhost:4200',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });

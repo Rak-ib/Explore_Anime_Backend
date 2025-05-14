@@ -8,11 +8,10 @@ export declare class AuthService {
     private userModel;
     private jwtService;
     constructor(userModel: mongoose.Model<User>, jwtService: JwtService);
-    createUser(userDto: CreateUserDto): Promise<{
-        token: string;
-    }>;
+    createUser(userDto: CreateUserDto, res: Response): Promise<void>;
     loginUser(loginDto: LoginDto, res: Response): Promise<void>;
     checkAuth(authToken: string): Promise<{
         username: string;
     }>;
+    logoutUser(res: Response): Promise<Response<any, Record<string, any>>>;
 }
