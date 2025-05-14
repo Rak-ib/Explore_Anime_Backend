@@ -11,7 +11,8 @@ async function bootstrap() {
 
   app.enableCors({
     // origin: 'https://exploreanime.vercel.app', // Frontend URL
-    origin: 'http://localhost:4200',
+    // origin: 'http://localhost:4200',
+    origin: process.env.FRONTEND_URL,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
